@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	pokecache "pokedex/pokeCache"
 	"pokedex/pokeapi"
 	"strings"
 )
@@ -47,6 +46,26 @@ func commandMap(pageCount *int) error {
 	return nil
 }
 
+// wrapper for the Pokemon function
+func commandPokemon(query string) error {
+	pokemon := pokeapi.QueryPokemon(query)
+	if pokemon.Id == 0 {
+		return nil // pokemon not found
+	}
+	fmt.Println("pokemon found:", pokemon.Name, " ID:", pokemon.Id) // might need some other formatting
+	return nil
+}
+
+// wrapper for the types function
+func commandTypes(query string) error {
+	types := pokeapi.QueryTypes(query)
+	if types.Id == 0 {
+		return nil // type not found
+	}
+	fmt.Println("type found:", types.Name, " ID:", types.Id, " Types:", types.Damage_relations)
+	return nil
+}
+
 var cmds = map[string]cliCommand{
 	"exit": {
 		name:        "exit",
@@ -72,11 +91,21 @@ var cmds = map[string]cliCommand{
 		callback:    commandExit,
 		config:      config{""},
 	},
+	"pokemon": {
+		name:        "pokemon",
+		description: "Displays the name and ID number of a pokemon, given a pokemons name or ID number",
+		callback:    commandExit, // not used
+		config:      config{""},  // not used
+	},
+	"types": {
+		name:        "types",
+		description: "Displays the type relations for a given type or type ID",
+		callback:    commandExit, // not used
+		config:      config{""},  // not used
+	},
 }
 
 func main() {
-	cache := pokecache.NewCache(5)
-	cache.Add("hello", []byte{})
 	mapCount := 0
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
@@ -109,6 +138,18 @@ func main() {
 				mapCount++
 				mapCount++
 			}
+		case "pokemon":
+			if len(command) < 2 {
+				fmt.Println("No argument \"pokemon\" provided, try again.")
+				break
+			}
+			commandPokemon(command[1])
+		case "types":
+			if len(command) < 2 {
+				fmt.Println("No argument \"pokemon\" provided, try again.")
+				break
+			}
+			commandTypes(command[1])
 		default:
 			fmt.Println("Unknown command: ", command[0])
 		}

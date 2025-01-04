@@ -60,7 +60,24 @@ func QueryPokemon(pokemon string) (pokemonResponse Pokemon) {
 	resp, err := http.Get(fmt.Sprintf("https://pokeapi.co/api/v2/pokemon/%s", pokemon))
 	check(err)
 	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		fmt.Printf("\nPokemon: \"%s\" not found, try again.\n", pokemon)
+		return
+	}
 	err = json.NewDecoder(resp.Body).Decode(&pokemonResponse)
+	check(err)
+	return
+}
+
+func QueryTypes(pokemon string) (typeResponse Type) {
+	resp, err := http.Get(fmt.Sprintf("https://pokeapi.co/api/v2/type/%s", pokemon))
+	check(err)
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		fmt.Printf("\nPokemon: \"%s\" not found, try again.\n", pokemon)
+		return
+	}
+	err = json.NewDecoder(resp.Body).Decode(&typeResponse)
 	check(err)
 	return
 }

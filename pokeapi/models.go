@@ -74,6 +74,89 @@ type VersionGroupFlavorText struct {
 	Version_group NamedAPIResource `json:"version_group"`
 }
 
+type PokemonAbility struct {
+	Is_hidden bool             `json:"is_hidden"`
+	Slot      int              `json:"slot"`
+	Ability   NamedAPIResource `json:"ability"`
+}
+
+type PokemonType struct {
+	Slot int              `json:"slot"`
+	Type NamedAPIResource `json:"type"`
+}
+
+type PokemonFormType struct {
+	Slot int              `json:"slot"`
+	Type NamedAPIResource `json:"type"`
+}
+
+type PokemonTypePast struct {
+	Generation NamedAPIResource `json:"generation"`
+	Types      []PokemonType    `json:"types"`
+}
+
+type PokemonHeldItem struct {
+	Item            NamedAPIResource         `json:"item"`
+	Version_details []PokemonHeldItemVersion `json:"version_details"`
+}
+
+type PokemonHeldItemVersion struct {
+	Version NamedAPIResource `json:"version"`
+	Rarity  int              `json:"rarity"`
+}
+
+type PokemonMove struct {
+	Move                  NamedAPIResource     `json:"move"`
+	Version_group_details []PokemonMoveVersion `json:"version_group_details"`
+}
+
+type PokemonMoveVersion struct {
+	Move_learn_method NamedAPIResource `json:"move_learn_method"`
+	VersionGroup      NamedAPIResource `json:"version_group"`
+	Level_learned_at  int              `json:"level_learned_at"`
+}
+
+type PokemonStat struct {
+	Stat      NamedAPIResource `json:"stat"`
+	Effort    int              `json:"effort"` // ev values
+	Base_stat int              `json:"base_stat"`
+}
+
+type PokemonSprites struct {
+	Front_default      string `json:"front_default"`
+	Front_shiny        string `json:"front_shiny"`
+	Front_female       string `json:"front_female"`
+	Front_shiny_female string `json:"front_shiny_female"`
+	Back_default       string `json:"back_default"`
+	Back_shiny         string `json:"back_shiny"`
+	Back_female        string `json:"back_female"`
+	Back_shiny_female  string `json:"back_shiny_female"`
+}
+
+type PokemonCries struct {
+	Latest string `json:"latest"`
+	Legacy string `json:"legacy"`
+}
+
+type TypePokemon struct {
+	Slot    int              `json:"slot"`
+	Pokemon NamedAPIResource `json:"pokemon"`
+}
+
+type TypeRelations struct {
+	No_damage_to       []NamedAPIResource `json:"no_damage_to"`
+	Half_damage_to     []NamedAPIResource `json:"half_damage_to"`
+	Double_damage_to   []NamedAPIResource `json:"double_damage_to"`
+	No_damage_from     []NamedAPIResource `json:"no_damage_from"`
+	Half_damage_from   []NamedAPIResource `json:"half_damage_from"`
+	Double_damage_from []NamedAPIResource `json:"double_damage_from"`
+}
+
+type TypeRelationsPast struct {
+	Generation       NamedAPIResource `json:"generation"`
+	Damage_relations TypeRelations    `json:"damage_relations"`
+}
+
 // // Complex response models
 
 // this genric response is for all endpoints without a query
@@ -108,83 +191,32 @@ type Pokemon struct {
 	Name                     string                `json:"name"`
 	Base_experience          int                   `json:"base_experience"`
 	Height                   int                   `json:"height"`
-	Is_default               bool                  `json:"is_default"`
-	Order                    int                   `json:"order"`
+	Is_default               bool                  `json:"is_default"` // Set for exactly one Pokémon used as the default for each species.
+	Order                    int                   `json:"order"`      // Order for sorting. Almost national order, except families are grouped together.
 	Weight                   int                   `json:"weight"`
-	Abilities                []PokemonAbility    `json:"abilities"`
-	Forms                    []NamedAPIResource    `json:"forms"`
-	Game_indices             []GenerationGameIndex `json:"game_indices"`
+	Abilities                []PokemonAbility      `json:"abilities"`
+	Forms                    []NamedAPIResource    `json:"forms"`        // A list of forms this Pokémon can take on.
+	Game_indices             []GenerationGameIndex `json:"game_indices"` // A list of game indices relevent to Pokémon item by generation.
 	Held_items               []PokemonHeldItem     `json:"held_items"`
 	Location_area_encounters string                `json:"location_area_encounters"`
 	Moves                    []PokemonMove         `json:"moves"`
-	Past_types               []PokemonTypePast     `json:"past_types"`
-	Sprites                  PokemonSprites        `json:"sprites"`
+	Past_types               []PokemonTypePast     `json:"past_types"` // A list of details showing types this pokémon had in previous generations
+	Sprites                  PokemonSprites        `json:"sprites"`    // A set of sprites used to depict this Pokémon in the game.
 	Cries                    PokemonCries          `json:"cries"`
-	Species                  []NamedAPIResource    `json:"species"`
+	Species                  NamedAPIResource      `json:"species"`
 	Stats                    []PokemonStat         `json:"stats"`
 	Types                    []PokemonType         `json:"types"`
 }
 
-type PokemonAbility struct {
-	Is_hidden bool 			   `json:"is_hidden"`
-	Slot 	  int 			   `json:"slot"`
-	Ability   NamedAPIResource `json:"ability"`
-}
-
-type PokemonType struct {
-	Slot int `json:"slot"`
-	Type NamedAPIResource `json:"type"`
-}
-
-type PokemonFormType struct {
-	Slot int `json:"slot"`
-	Type NamedAPIResource `json:"type"`
-}
-
-type PokemonTypePast struct {
-	Generation NamedAPIResource `json:"generation"`
-	Types []PokemonType `json:"types"`
-}
-
-type PokemonHeldItem struct {
-	Item NamedAPIResource `json:"item"`
-	Version_details []PokemonHeldItemVersion `json:"version_details"`
-}
-
-type PokemonHeldItemVersion struct {
-	Version NamedAPIResource `json:"version"`
-	Rarity int `json:"rarity"`
-}
-
-type PokemonMove struct {
-	Move NamedAPIResource	`json:"move"`
-	Version_group_details []PokemonMoveVersion `json:"version_group_details"`
-}
-
-type PokemonMoveVersion struct {
-	Move_learn_method NamedAPIResource `json:"move_learn_method"`
-	VersionGroup NamedAPIResource `json:"version_group"`
-	Level_learned_at int `json:"level_learned_at"`
-}
-
-type PokemonStat struct {
-	Stat NamedAPIResource `json:"stat"`
-	Effort int `json:"effort"`
-	Base_stat int `json:"base_stat"`
-}
-
-type PokemonSprites struct {
-	Front_default string `json:"front_default"`
-	Front_shiny string `json:"front_shiny"`
-	Front_female string `json:"front_female"`
-	Front_shiny_female string `json:"front_shiny_female"`
-	Back_default string `json:"back_default"`
-	Back_shiny string `json:"back_shiny"`
-	Back_female string `json:"back_female"`
-	Back_shiny_female string `json:"back_shiny_female"`
-}
-
-type PokemonCries struct {
-	Latest string `json:"latest"`
-	Legacy string `json:"legacy"`
+type Type struct {
+	Id                    int                   `json:"id"`
+	Name                  string                `json:"name"`
+	Damage_relations      TypeRelations         `json:"damage_relations"`
+	Past_damage_relations []TypeRelationsPast   `json:"past_damage_relations"`
+	Game_indices          []GenerationGameIndex `json:"game_indices"`
+	Generation            NamedAPIResource      `json:"generation"`
+	Move_damage_class     NamedAPIResource      `json:"move_damage_class"`
+	Names                 []Name                `json:"names"`
+	Pokemon               []TypePokemon         `json:"pokemon"`
+	Moves                 []NamedAPIResource    `json:"moves"`
 }
