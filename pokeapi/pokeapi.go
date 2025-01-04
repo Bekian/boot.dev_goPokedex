@@ -3,7 +3,6 @@ package pokeapi
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"strconv"
 )
@@ -57,13 +56,11 @@ func GetLocation(page *int) (mapResponse NamedAPIResourceList) {
 	return
 }
 
-// need to save the next location and set it up as the next uri
-
 func QueryPokemon(pokemon string) (pokemonResponse Pokemon) {
 	resp, err := http.Get(fmt.Sprintf("https://pokeapi.co/api/v2/pokemon/%s", pokemon))
 	check(err)
 	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
+	err = json.NewDecoder(resp.Body).Decode(&pokemonResponse)
 	check(err)
-	fmt.Println(string(body))
+	return
 }

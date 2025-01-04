@@ -111,7 +111,7 @@ type Pokemon struct {
 	Is_default               bool                  `json:"is_default"`
 	Order                    int                   `json:"order"`
 	Weight                   int                   `json:"weight"`
-	Abilities                []PokemonAbilities    `json:"abilities"`
+	Abilities                []PokemonAbility    `json:"abilities"`
 	Forms                    []NamedAPIResource    `json:"forms"`
 	Game_indices             []GenerationGameIndex `json:"game_indices"`
 	Held_items               []PokemonHeldItem     `json:"held_items"`
@@ -123,4 +123,68 @@ type Pokemon struct {
 	Species                  []NamedAPIResource    `json:"species"`
 	Stats                    []PokemonStat         `json:"stats"`
 	Types                    []PokemonType         `json:"types"`
+}
+
+type PokemonAbility struct {
+	Is_hidden bool 			   `json:"is_hidden"`
+	Slot 	  int 			   `json:"slot"`
+	Ability   NamedAPIResource `json:"ability"`
+}
+
+type PokemonType struct {
+	Slot int `json:"slot"`
+	Type NamedAPIResource `json:"type"`
+}
+
+type PokemonFormType struct {
+	Slot int `json:"slot"`
+	Type NamedAPIResource `json:"type"`
+}
+
+type PokemonTypePast struct {
+	Generation NamedAPIResource `json:"generation"`
+	Types []PokemonType `json:"types"`
+}
+
+type PokemonHeldItem struct {
+	Item NamedAPIResource `json:"item"`
+	Version_details []PokemonHeldItemVersion `json:"version_details"`
+}
+
+type PokemonHeldItemVersion struct {
+	Version NamedAPIResource `json:"version"`
+	Rarity int `json:"rarity"`
+}
+
+type PokemonMove struct {
+	Move NamedAPIResource	`json:"move"`
+	Version_group_details []PokemonMoveVersion `json:"version_group_details"`
+}
+
+type PokemonMoveVersion struct {
+	Move_learn_method NamedAPIResource `json:"move_learn_method"`
+	VersionGroup NamedAPIResource `json:"version_group"`
+	Level_learned_at int `json:"level_learned_at"`
+}
+
+type PokemonStat struct {
+	Stat NamedAPIResource `json:"stat"`
+	Effort int `json:"effort"`
+	Base_stat int `json:"base_stat"`
+}
+
+type PokemonSprites struct {
+	Front_default string `json:"front_default"`
+	Front_shiny string `json:"front_shiny"`
+	Front_female string `json:"front_female"`
+	Front_shiny_female string `json:"front_shiny_female"`
+	Back_default string `json:"back_default"`
+	Back_shiny string `json:"back_shiny"`
+	Back_female string `json:"back_female"`
+	Back_shiny_female string `json:"back_shiny_female"`
+}
+
+type PokemonCries struct {
+	Latest string `json:"latest"`
+	Legacy string `json:"legacy"`
 }
