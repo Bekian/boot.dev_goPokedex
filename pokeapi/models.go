@@ -157,9 +157,24 @@ type TypeRelationsPast struct {
 	Damage_relations TypeRelations    `json:"damage_relations"`
 }
 
+type EncounterMethodRate struct {
+	Encounter_method NamedAPIResource          `json:"encounter_method"`
+	Version_details  []EncounterVersionDetails `json:"version_details"`
+}
+
+type EncounterVersionDetails struct {
+	Rate    int              `json:"rate"`
+	Version NamedAPIResource `json:"version"`
+}
+
+type PokemonEncounter struct {
+	Pokemon         NamedAPIResource         `json:"pokemon"`
+	Version_details []VersionEncounterDetail `json:"version_details"`
+}
+
 // // Complex response models
 
-// this genric response is for all endpoints without a query
+// this genric response is for all endpoints without a query, such as a name or ID
 // its a paginated list of all resources for an endpoint
 type NamedAPIResourceList struct {
 	Count    int                `json:"count"`    // count of resources // S/N all json field names must be uppercase
@@ -184,6 +199,17 @@ type LocationIDResponse struct {
 	Name         string                `json:"name"`
 	Names        []Name                `json:"names"`
 	Region       NamedAPIResource      `json:"region"`
+}
+
+// response from `location-area/{id or name}/`
+type LocationAreaResponse struct {
+	Id                     int                   `json:"id"`
+	Name                   string                `json:"name"`
+	Game_index             int                   `json:"game_index"`
+	Encounter_method_rates []EncounterMethodRate `json:"encounter_method_rates"`
+	Location               NamedAPIResource      `json:"location"`
+	Names                  []Name                `json:"names"`
+	Pokemon_encounters     []PokemonEncounter    `json:"pokemon_encounters"`
 }
 
 type Pokemon struct {

@@ -22,11 +22,11 @@ func GetLocationViaInput(input *string) (mapResponse LocationIDResponse) {
 		uri += "/" + *input
 	}
 	// request to uri
-	res, err := http.Get(uri)
+	resp, err := http.Get(uri)
 	check(err)
-	defer res.Body.Close()
+	defer resp.Body.Close()
 	// decode to the mapResponse pointer
-	err = json.NewDecoder(res.Body).Decode(&mapResponse)
+	err = json.NewDecoder(resp.Body).Decode(&mapResponse)
 	check(err)
 	fmt.Println(mapResponse)
 	return
@@ -47,11 +47,43 @@ func GetLocation(page *int) (mapResponse NamedAPIResourceList) {
 		uri = "https://pokeapi.co/api/v2/location?offset=" + strconv.Itoa(pageNumber*20)
 	}
 	// request to uri
-	res, err := http.Get(uri)
+	resp, err := http.Get(uri)
 	check(err)
-	defer res.Body.Close()
+	defer resp.Body.Close()
 	// decode to the mapResponse pointer
-	err = json.NewDecoder(res.Body).Decode(&mapResponse)
+	err = json.NewDecoder(resp.Body).Decode(&mapResponse)
+	check(err)
+	return
+}
+
+func GetLocationAreaPage(page *int) (mapResponse NamedAPIResourceList) {
+	var uri string
+	// determine uri based on provided page number
+	if page == nil {
+		uri = "https://pokeapi.co/api/v2/location-area?offset=0"
+	} else {
+		pageNumber := *page
+		if pageNumber < 0 {
+			panic("Provided page is less than 0")
+		}
+		uri = "https://pokeapi.co/api/v2/location-area?offset=" + strconv.Itoa(pageNumber*20)
+	}
+	// request to uri
+	resp, err := http.Get(uri)
+	check(err)
+	defer resp.Body.Close()
+	// decode to the mapResponse pointer
+	err = json.NewDecoder(resp.Body).Decode(&mapResponse)
+	check(err)
+	return
+}
+
+func GetLocationAreaName(location *string) (mapResponse LocationAreaResponse) {
+	resp, err := http.Get(fmt.Sprintf("https://pokeapi.co/api/v2/location-area/%s", *location))
+	check(err)
+	defer resp.Body.Close()
+	// decode to the mapResponse pointer
+	err = json.NewDecoder(resp.Body).Decode(&mapResponse)
 	check(err)
 	return
 }

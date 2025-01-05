@@ -25,6 +25,10 @@ type config struct {
 	option string
 }
 
+func noArgProvided(msg string) {
+	fmt.Printf("\nNo argument \"%s\" provided, try again\n", msg)
+}
+
 func commandExit() error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
@@ -66,6 +70,15 @@ func commandTypes(query string) error {
 	return nil
 }
 
+func commandLocation(query string) error {
+	location := pokeapi.GetLocationAreaName(&query)
+	if location.Id == 0 {
+		return nil // location not found
+	}
+	fmt.Println("Location found:", location.Name, " ID:", location.Id)
+	return nil
+}
+
 var cmds = map[string]cliCommand{
 	"exit": {
 		name:        "exit",
@@ -86,14 +99,20 @@ var cmds = map[string]cliCommand{
 		config:      config{""},
 	},
 	"mapb": {
-		name:        "map",
+		name:        "mapb",
 		description: "Displays the previous 20 names of location areas in the Pokemon world.",
+		callback:    commandExit,
+		config:      config{""},
+	},
+	"loc": {
+		name:        "loc",
+		description: "Displays the information of a location, given by a location's name or ID number",
 		callback:    commandExit,
 		config:      config{""},
 	},
 	"pokemon": {
 		name:        "pokemon",
-		description: "Displays the name and ID number of a pokemon, given a pokemons name or ID number",
+		description: "Displays the name and ID number of a pokemon, given by a pokemons name or ID number",
 		callback:    commandExit, // not used
 		config:      config{""},  // not used
 	},
@@ -138,15 +157,21 @@ func main() {
 				mapCount++
 				mapCount++
 			}
+		case "loc":
+			if len(command) < 2 {
+				noArgProvided("location")
+				break
+			}
+			commandLocation(command[1])
 		case "pokemon":
 			if len(command) < 2 {
-				fmt.Println("No argument \"pokemon\" provided, try again.")
+				noArgProvided("pokemon")
 				break
 			}
 			commandPokemon(command[1])
 		case "types":
 			if len(command) < 2 {
-				fmt.Println("No argument \"pokemon\" provided, try again.")
+				noArgProvided("type")
 				break
 			}
 			commandTypes(command[1])
