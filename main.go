@@ -16,6 +16,7 @@ func Check(e error) {
 
 type cliCommand struct {
 	name        string
+	cmd         string
 	description string
 	callback    func() error
 	config      config
@@ -25,8 +26,12 @@ type config struct {
 	option string
 }
 
-func noArgProvided(msg string) {
-	fmt.Printf("\nNo argument \"%s\" provided, try again\n", msg)
+func noArgProvided(args []string, msg string) bool {
+	if len(args) < 2 {
+		fmt.Printf("\nNo argument \"%s\" provided, try again\n", msg)
+		return true
+	}
+	return false
 }
 
 func commandExit() error {
@@ -79,45 +84,70 @@ func commandLocation(query string) error {
 	return nil
 }
 
+func handleMap(back bool, mapCount *int) {
+	mapNumber := *mapCount
+	if !back {
+		mapNumber--
+		mapNumber--
+		if mapNumber >= 0 {
+			commandMap(&mapNumber)
+		} else {
+			fmt.Println("No previous locations available")
+			mapNumber++
+			mapNumber++
+		}
+		return
+	}
+	commandMap(&mapNumber)
+	mapNumber++
+}
+
 var cmds = map[string]cliCommand{
 	"exit": {
 		name:        "exit",
+		cmd:         "exit",
 		description: "Exit the Pokedex",
 		callback:    commandExit,
 		config:      config{"none"},
 	},
 	"help": {
 		name:        "help",
+		cmd:         "help",
 		description: "Displays a help message",
 		callback:    commandExit, // this isnt used
 		config:      config{"none"},
 	},
 	"map": {
 		name:        "map",
+		cmd:         "map",
 		description: "Displays the next 20 names of location areas in the Pokemon world.",
 		callback:    commandExit,
 		config:      config{""},
 	},
 	"mapb": {
-		name:        "mapb",
+		name:        "map back",
+		cmd:         "mapb",
 		description: "Displays the previous 20 names of location areas in the Pokemon world.",
 		callback:    commandExit,
 		config:      config{""},
 	},
 	"loc": {
-		name:        "loc",
+		name:        "locaction",
+		cmd:         "loc",
 		description: "Displays the information of a location, given by a location's name or ID number",
 		callback:    commandExit,
 		config:      config{""},
 	},
 	"pokemon": {
 		name:        "pokemon",
+		cmd:         "pok",
 		description: "Displays the name and ID number of a pokemon, given by a pokemons name or ID number",
 		callback:    commandExit, // not used
 		config:      config{""},  // not used
 	},
 	"types": {
 		name:        "types",
+		cmd:         "types",
 		description: "Displays the type relations for a given type or type ID",
 		callback:    commandExit, // not used
 		config:      config{""},  // not used
@@ -142,36 +172,24 @@ func main() {
 			Check(err)
 		case "help":
 			for _, cmd := range cmds {
-				fmt.Println(cmd.name, ":", cmd.description)
+				fmt.Printf("-%s: %s usage - %s", cmd.name, cmd.description, cmd.cmd)
 			}
 		case "map":
-			commandMap(&mapCount)
-			mapCount++
+			handleMap(false, &mapCount)
 		case "mapb":
-			mapCount--
-			mapCount--
-			if mapCount >= 0 {
-				commandMap(&mapCount)
-			} else {
-				fmt.Println("No previous locations available")
-				mapCount++
-				mapCount++
-			}
+			handleMap(true, &mapCount)
 		case "loc":
-			if len(command) < 2 {
-				noArgProvided("location")
+			if noArgProvided(command, cmds["location"].name) {
 				break
 			}
 			commandLocation(command[1])
 		case "pokemon":
-			if len(command) < 2 {
-				noArgProvided("pokemon")
+			if noArgProvided(command, cmds["pokemon"].name) {
 				break
 			}
 			commandPokemon(command[1])
 		case "types":
-			if len(command) < 2 {
-				noArgProvided("type")
+			if noArgProvided(command, cmds["types"].name) {
 				break
 			}
 			commandTypes(command[1])
